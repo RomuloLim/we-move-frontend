@@ -1,4 +1,4 @@
-import { ButtonShowcase } from "@/components/button-showcase";
+import { ComponentShowcase } from "@/components/component-showcase";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -13,7 +13,7 @@ export function App() {
           </div>
         </header>
         <main className="container mx-auto p-4">
-          <ButtonShowcase />
+          <ComponentShowcase />
         </main>
       </div>
     </ThemeProvider>

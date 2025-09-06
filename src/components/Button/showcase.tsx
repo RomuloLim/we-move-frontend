@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "./index"
 import { ColorShowcase } from "@/components/color-showcase"
 
 export function ButtonShowcase() {
