@@ -18,5 +18,8 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "@acme": "https://registry.acme.com/{name}.json",
+    "@originui": "https://originui.com/{name}.json"
+  }
 }

@@ -15,23 +15,28 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen bg-white flex flex-col max-w-sm mx-auto ">
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="flex-1 flex flex-col px-4 pt-20 justify-between">
-                <div className="flex flex-col justify-between">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
+            {/* Container com responsividade e profundidade */}
+            <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:max-w-md lg:shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+                {/* Header decorativo apenas em desktop */}
+                <div className="hidden md:block h-2 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+
+                {/* Login Form */}
+                <form onSubmit={handleSubmit} className="flex flex-col p-6 md:p-8 lg:p-10 space-y-6">
                     {/* Logo */}
-                    <div className="mb-20 flex justify-center">
-                        <div className="flex items-center gap-4">
+                    <div className="flex justify-center mb-4 md:mb-8">
+                        <div className="flex items-center gap-4 transform hover:scale-105 transition-transform duration-200">
                             <img
                                 src="/images/blue-typographic-logo.svg"
                                 alt="WeMove"
-                                className="h-20"
+                                className="h-16 md:h-20 lg:h-24"
                             />
                         </div>
                     </div>
 
-                    {/* Email Input */}
-                    <div>
+                    {/* Input Fields */}
+                    <div className="space-y-4">
+                        {/* Email Input */}
                         <Input
                             label="Email"
                             type="email"
@@ -55,34 +60,33 @@ export default function Login() {
                             required
                         />
                     </div>
-                </div>
-                {/* Login Button */}
-                <div className="pt-16 flex flex-col gap-5">
-                    <Button
-                        type="submit"
-                        className="w-full text-white"
-                        size="lg"
-                        variant="primary"
-                    >
-                        Login
-                    </Button>
+
+                    {/* Login Button */}
+                    <div className="pt-4">
+                        <Button
+                            type="submit"
+                            className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 shadow-md hover:shadow-lg transition-all duration-200"
+                            size="lg"
+                            variant="primary"
+                        >
+                            Login
+                        </Button>
+                    </div>
 
                     {/* Register Link */}
-                    <div className="pb-8 px-4">
-                        <div className="text-center">
-                            <p className="text-xs text-gray-600">
-                                Ainda não possui cadastro?{" "}
-                                <Link
-                                    to="/register"
-                                    className="text-blue-600 font-semibold hover:text-blue-700 transition-colors text-sm"
-                                >
-                                    Registre-se
-                                </Link>
-                            </p>
-                        </div>
+                    <div className="text-center pt-2">
+                        <p className="text-xs text-gray-600 md:text-sm">
+                            Ainda não possui cadastro?{" "}
+                            <Link
+                                to="/register"
+                                className="text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-all duration-200"
+                            >
+                                Registre-se
+                            </Link>
+                        </p>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     )
 }
