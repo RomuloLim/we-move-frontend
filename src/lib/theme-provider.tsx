@@ -34,7 +34,7 @@ export function ThemeProvider({
         const root = window.document.documentElement
 
         // Remove previous theme classes
-        root.classList.remove('light', 'dark', '.-Light-Mode', '.-Dark-Mode')
+        root.classList.remove('light', 'dark')
 
         let resolved: 'light' | 'dark'
 
@@ -48,9 +48,9 @@ export function ThemeProvider({
 
         // Add the appropriate theme classes
         if (resolved === 'dark') {
-            root.classList.add('dark', '.-Dark-Mode')
+            root.classList.add('dark')
         } else {
-            root.classList.add('light', '.-Light-Mode')
+            root.classList.add('light')
         }
 
         // Store theme preference
@@ -67,15 +67,15 @@ export function ThemeProvider({
 
         const handleChange = () => {
             const root = window.document.documentElement
-            root.classList.remove('light', 'dark', '.-Light-Mode', '.-Dark-Mode')
+            root.classList.remove('light', 'dark')
 
             const resolved = mediaQuery.matches ? 'dark' : 'light'
             setResolvedTheme(resolved)
 
             if (resolved === 'dark') {
-                root.classList.add('dark', '.-Dark-Mode')
+                root.classList.add('dark')
             } else {
-                root.classList.add('light', '.-Light-Mode')
+                root.classList.add('light')
             }
         }
 

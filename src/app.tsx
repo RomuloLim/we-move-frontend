@@ -5,10 +5,10 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export function App() {
   return (
     <ThemeProvider defaultTheme="system">
-      <div className="min-h-screen bg-background-primary text-text-primary">
-        <header className="border-b border-border-primary bg-background-primary p-4">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <header className="border-b border-gray-200 bg-white p-4">
           <div className="container mx-auto flex items-center justify-between">
-            <h1 className="text-xl font-bold text-text-brand-primary">We Move</h1>
+            <h1 className="text-xl font-bold text-brand-600">We Move</h1>
             <ThemeToggle />
           </div>
         </header>

@@ -1,6 +1,96 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "./styles/tokens.css";
+
+@theme {
+  --color-brand-25: #f5faff;
+  --color-brand-50: #eff8ff;
+  --color-brand-100: #d1e9ff;
+  --color-brand-200: #b2ddff;
+  --color-brand-300: #84caff;
+  --color-brand-400: #53b1fd;
+  --color-brand-500: #2e90fa;
+  --color-brand-600: #1570ef;
+  --color-brand-700: #175cd3;
+  --color-brand-800: #1849a9;
+  --color-brand-900: #194185;
+  --color-brand-950: #102a56;
+
+  --color-error-25: #fffbfa;
+  --color-error-50: #fef3f2;
+  --color-error-100: #fae5e2;
+  --color-error-200: #fecfca;
+  --color-error-300: #fda29b;
+  --color-error-400: #f97066;
+  --color-error-500: #f04438;
+  --color-error-600: #d92d20;
+  --color-error-700: #b42318;
+  --color-error-800: #912018;
+  --color-error-900: #7a271a;
+  --color-error-950: #55160c;
+
+  --color-success-25: #f6fef9;
+  --color-success-50: #ecfdf3;
+  --color-success-100: #dcfae6;
+  --color-success-200: #abefc6;
+  --color-success-300: #75e0a7;
+  --color-success-400: #47cd89;
+  --color-success-500: #17b26a;
+  --color-success-600: #079455;
+  --color-success-700: #067647;
+  --color-success-800: #085d3a;
+  --color-success-900: #074d31;
+  --color-success-950: #053321;
+
+  --color-warning-25: #fffcf5;
+  --color-warning-50: #fffaeb;
+  --color-warning-100: #fef0c7;
+  --color-warning-200: #fedf89;
+  --color-warning-300: #fec84b;
+  --color-warning-400: #fdb022;
+  --color-warning-500: #f79009;
+  --color-warning-600: #dc6803;
+  --color-warning-700: #b54708;
+  --color-warning-800: #93370d;
+  --color-warning-900: #7a2e0e;
+  --color-warning-950: #4e1d09;
+
+  --color-gray-25: #fcfcfd;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f7;
+  --color-gray-200: #eaecf0;
+  --color-gray-300: #d0d5dd;
+  --color-gray-400: #98a2b3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #182230;
+  --color-gray-900: #101828;
+  --color-gray-950: #0c111d;
+}
+
+/* Base styles */
+html {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Debug CSS for button colors */
+.debug-brand-600 {
+  background-color: #1570ef !important;
+  color: white !important;
+}
+
+.debug-brand-700 {
+  background-color: #175cd3 !important;
+}
+
+.debug-error-600 {
+  background-color: #d92d20 !important;
+  color: white !important;
+}
 
 /* Base styles */
 html {
