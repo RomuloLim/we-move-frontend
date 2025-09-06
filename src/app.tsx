@@ -1,21 +1,22 @@
-import { ComponentShowcase } from "@/components/component-showcase";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/lib/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import { ComponentShowcase } from "./components/component-showcase";
 
 export function App() {
   return (
-    <ThemeProvider defaultTheme="system">
-      <div className="min-h-screen bg-gray-50 text-gray-900">
-        <header className="border-b border-gray-200 bg-white p-4">
-          <div className="container mx-auto flex items-center justify-between">
-            <h1 className="text-xl font-bold text-brand-600">We Move</h1>
-            <ThemeToggle />
-          </div>
-        </header>
-        <main className="container mx-auto p-4">
-          <ComponentShowcase />
-        </main>
-      </div>
+    <ThemeProvider defaultTheme="light">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/showcase" element={<ComponentShowcase />} />
+          <Route path="*" element={<div>404 Not Found</div>} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   )
 }
