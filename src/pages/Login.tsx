@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
-import { Input } from "@/components/Input"
+import { Input } from "@/components/Inputs/Input"
 import { Button } from "@/components/Button"
 import { Mail, Lock } from "lucide-react"
 
