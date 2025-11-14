@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { mergeClasses } from "@/lib/utils"
 
 const textareaVariants = cva(
     "flex min-h-[80px] w-full rounded-md border px-3 py-2 font-normal text-base leading-6 ring-offset-background placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 resize-none",
@@ -60,7 +60,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 )}
                 <div className="relative">
                     <textarea
-                        className={cn(
+                        className={mergeClasses(
                             textareaVariants({ variant: textareaVariant, size, className }),
                             disabled && "bg-gray-50 text-gray-500 border-gray-200",
                             showCharCount && maxLength && "pb-8"

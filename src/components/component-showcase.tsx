@@ -1,5 +1,5 @@
 import { ButtonShowcase } from "@/components/Button/showcase"
-import { InputShowcase } from "@/components/Input/showcase"
+import { InputShowcase } from "@/components/Inputs/Input/showcase"
 import { TextareaShowcase } from "@/components/Textarea/showcase"
 
 export function ComponentShowcase() {
