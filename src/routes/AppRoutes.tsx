@@ -16,6 +16,8 @@ export function AppRoutes() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/showcase" element={<ComponentShowcase />} /> */}
 
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/*" element={<PrivateRoutes />} />
             </Routes>
         </Router>
