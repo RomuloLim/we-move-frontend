@@ -31,71 +31,72 @@ export type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "size
         error?: string
         leftIcon?: React.ReactNode
         rightIcon?: React.ReactNode
-        inputRef?: React.Ref<HTMLInputElement>
     }
 
-function Input({
-    className,
-    variant,
-    size,
-    type,
-    label,
-    hint,
-    error,
-    leftIcon,
-    rightIcon,
-    disabled,
-    inputRef,
-    ...props
-}: InputProps) {
-    const hasError = error || variant === "error"
-    const inputVariant = hasError ? "error" : "default"
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+    ({
+        className,
+        variant,
+        size,
+        type,
+        label,
+        hint,
+        error,
+        leftIcon,
+        rightIcon,
+        disabled,
+        ...props
+    }, ref) => {
+        const hasError = error || variant === "error"
+        const inputVariant = hasError ? "error" : "default"
 
-    return (
-        <div className="w-full">
-            {label && (
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    {label}
-                </label>
-            )}
-
-            <div className="relative">
-                {leftIcon && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        {leftIcon}
-                    </div>
+        return (
+            <div className="w-full">
+                {label && (
+                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                        {label}
+                    </label>
                 )}
 
-                <input
-                    type={type}
-                    className={mergeClasses(
-                        inputVariants({ variant: inputVariant, size, className }),
-                        leftIcon && "pl-10",
-                        rightIcon && "pr-10",
-                        disabled && "bg-gray-50 text-gray-500 border-gray-200"
+                <div className="relative">
+                    {leftIcon && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            {leftIcon}
+                        </div>
                     )}
-                    ref={inputRef}
-                    disabled={disabled}
-                    {...props}
-                />
-                
-                {rightIcon && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        {rightIcon}
-                    </div>
+
+                    <input
+                        type={type}
+                        className={mergeClasses(
+                            inputVariants({ variant: inputVariant, size, className }),
+                            leftIcon && "pl-10",
+                            rightIcon && "pr-10",
+                            disabled && "bg-gray-50 text-gray-500 border-gray-200"
+                        )}
+                        ref={ref}
+                        disabled={disabled}
+                        {...props}
+                    />
+
+                    {rightIcon && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            {rightIcon}
+                        </div>
+                    )}
+                </div>
+
+                {hint && !hasError && (
+                    <p className="mt-1.5 text-xs text-gray-600">{hint}</p>
+                )}
+
+                {hasError && (
+                    <p className="mt-1.5 text-xs text-red-600">{error}</p>
                 )}
             </div>
+        )
+    }
+)
 
-            {hint && !hasError && (
-                <p className="mt-1.5 text-xs text-gray-600">{hint}</p>
-            )}
-
-            {hasError && (
-                <p className="mt-1.5 text-xs text-red-600">{error}</p>
-            )}
-        </div>
-    )
-}
 Input.displayName = "Input"
 
 export { Input, inputVariants }
