@@ -23,6 +23,7 @@ type User = {
   email: string
   gender: Gender
   user_type: UserType
+  student_profile?: Student
   email_verified_at: string | null
   created_at: string
   updated_at: string
