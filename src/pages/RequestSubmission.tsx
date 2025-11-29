@@ -34,13 +34,23 @@ const ACTUATION_FORMS = [
 ]
 
 export default function RequestSubmission() {
-    const [currentStep, setCurrentStep] = useState(2)
+    const [currentStep, setCurrentStep] = useState(1)
     const [formData, setFormData] = useState({
+        // Step 1: Personal Information
+        address: "",
+        number: "",
+        neighborhood: "",
+        city: "",
+        phone: "",
+        countryCode: "+55",
+        birthDate: "",
+        addressProof: null as File | null,
+        photoId: null as File | null,
+        photo3x4: null as File | null,
+        // Step 2: Study Information
         email: "",
         registration: "",
         semester: "",
-        phone: "",
-        countryCode: "+55",
         institution: "",
         course: "",
         actuationForm: "aluno",
@@ -68,14 +78,89 @@ export default function RequestSubmission() {
                     subtitle="Olivia Rhye"
                 />
 
-                <FormWizard
-                    steps={WIZARD_STEPS}
-                    currentStep={currentStep}
-                    currentStepTitle={getCurrentStepTitle()}
-                />
+                <div className="pt-[52px]">
+                    <FormWizard
+                        steps={WIZARD_STEPS}
+                        currentStep={currentStep}
+                        currentStepTitle={getCurrentStepTitle()}
+                    />
+                </div>
 
-                <div className="px-4 py-6">
+                <div className="px-4 py-6 pb-32">
                     <div className="space-y-4">
+                        {currentStep === 1 && (
+                            <>
+                                <Input
+                                    label="Endereço"
+                                    placeholder="Rua João Faccundo"
+                                    value={formData.address}
+                                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                />
+
+                                <div className="flex gap-4">
+                                    <div className="w-[84px]">
+                                        <Input
+                                            label="Número"
+                                            placeholder="12"
+                                            value={formData.number}
+                                            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <Input
+                                            label="Bairro"
+                                            placeholder="Centro"
+                                            value={formData.neighborhood}
+                                            onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <Input
+                                    label="Cidade"
+                                    placeholder="Pacajus"
+                                    value={formData.city}
+                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                />
+
+                                <PhoneInput
+                                    label="Telefone de contato"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    countryCode={formData.countryCode}
+                                    onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
+                                />
+
+                                <Input
+                                    label="Data de Nascimento"
+                                    placeholder="DD/MM/AAAA"
+                                    value={formData.birthDate}
+                                    onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                                />
+
+                                <FileUpload
+                                    label="Comprovante de endereço"
+                                    value={formData.addressProof}
+                                    onChange={(file) => setFormData({ ...formData, addressProof: file })}
+                                    accept="application/pdf,image/*"
+                                />
+
+                                <FileUpload
+                                    label="Documento com foto"
+                                    value={formData.photoId}
+                                    onChange={(file) => setFormData({ ...formData, photoId: file })}
+                                    accept="application/pdf,image/*"
+                                />
+
+                                <FileUpload
+                                    label="Foto 3x4"
+                                    value={formData.photo3x4}
+                                    onChange={(file) => setFormData({ ...formData, photo3x4: file })}
+                                    accept="image/*"
+                                />
+                            </>
+                        )}
+
                         {currentStep === 2 && (
                             <>
                                 <Input

@@ -23,7 +23,7 @@ export function RequestHeader({
     }
 
     return (
-        <div className="bg-white border-b border-gray-200 flex gap-2 h-[52px] items-center px-4 py-2.5">
+        <div className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-gray-200 flex gap-2 h-[52px] items-center px-4 py-2.5">
             <button
                 onClick={handleBack}
                 className="flex items-center justify-center w-6 h-6 text-gray-700 hover:text-gray-900 transition-colors"
