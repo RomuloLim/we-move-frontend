@@ -1,7 +1,11 @@
 import { useState } from "react"
+import { Mail, ArrowRight } from "lucide-react"
 import { RequestHeader } from "@/components/RequestHeader"
 import { FormWizard } from "@/components/FormWizard"
-import { Divider } from "@/components/Divider"
+import { CustomSelect } from "@/components/CustomSelect"
+import { PhoneInput } from "@/components/Inputs/PhoneInput"
+import { FileUpload } from "@/components/FileUpload"
+import { Input } from "@/components/Inputs/Input"
 
 const WIZARD_STEPS = [
     { id: 1, label: "Pessoal" },
@@ -9,8 +13,39 @@ const WIZARD_STEPS = [
     { id: 3, label: "Concluir" }
 ]
 
+const INSTITUTIONS = [
+    { value: "uece", label: "Universidade Estadual do Ceará - UECE" },
+    { value: "ufc", label: "Universidade Federal do Ceará - UFC" },
+    { value: "unifor", label: "Universidade de Fortaleza - UNIFOR" },
+]
+
+const COURSES = [
+    { value: "cc", label: "Ciências da Computação" },
+    { value: "eng", label: "Engenharia de Software" },
+    { value: "si", label: "Sistemas de Informação" },
+]
+
+const ACTUATION_FORMS = [
+    { value: "bolsista", label: "Bolsista" },
+    { value: "aluno", label: "Aluno" },
+    { value: "professor", label: "Professor" },
+    { value: "cursinho", label: "Cursinho" },
+    { value: "outro", label: "Outro" },
+]
+
 export default function RequestSubmission() {
-    const [currentStep, setCurrentStep] = useState(1)
+    const [currentStep, setCurrentStep] = useState(2)
+    const [formData, setFormData] = useState({
+        email: "",
+        registration: "",
+        semester: "",
+        phone: "",
+        countryCode: "+55",
+        institution: "",
+        course: "",
+        actuationForm: "aluno",
+        enrollmentProof: null as File | null,
+    })
 
     function getCurrentStepTitle() {
         switch (currentStep) {
@@ -26,8 +61,8 @@ export default function RequestSubmission() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="max-w-md mx-auto bg-white min-h-screen">
+        <div className="w-full min-h-screen bg-gray-50">
+            <div className="mx-auto bg-white min-h-screen">
                 <RequestHeader
                     title="Enviar Documentos"
                     subtitle="Olivia Rhye"
@@ -39,70 +74,94 @@ export default function RequestSubmission() {
                     currentStepTitle={getCurrentStepTitle()}
                 />
 
-                <div className="p-4">
-                    <div className="space-y-6">
-                        {/* Conteúdo do formulário baseado no step atual */}
-                        {currentStep === 1 && (
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold text-gray-900">
-                                    Dados Pessoais
-                                </h2>
-                                <p className="text-sm text-gray-600">
-                                    Preencha suas informações pessoais
-                                </p>
-
-                                <Divider text="ou" className="my-6" />
-
-                                {/* Formulário step 1 aqui */}
-                            </div>
-                        )}
-
+                <div className="px-4 py-6">
+                    <div className="space-y-4">
                         {currentStep === 2 && (
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold text-gray-900">
-                                    Informações Acadêmicas
-                                </h2>
-                                <p className="text-sm text-gray-600">
-                                    Preencha suas informações de estudo
-                                </p>
-                                {/* Formulário step 2 aqui */}
-                            </div>
-                        )}
+                            <>
+                                <Input
+                                    label="Email da Universidade"
+                                    type="email"
+                                    placeholder="aluno@email.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    leftIcon={<Mail className="w-4 h-4 text-gray-600" />}
+                                />
 
-                        {currentStep === 3 && (
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold text-gray-900">
-                                    Revisão
-                                </h2>
-                                <p className="text-sm text-gray-600">
-                                    Revise suas informações antes de enviar
-                                </p>
-                                {/* Revisão step 3 aqui */}
-                            </div>
+                                <div className="flex gap-4">
+                                    <div className="flex-1">
+                                        <Input
+                                            label="Matrícula"
+                                            placeholder="1515062"
+                                            value={formData.registration}
+                                            onChange={(e) => setFormData({ ...formData, registration: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="w-[84px]">
+                                        <Input
+                                            label="Semestre"
+                                            placeholder="12"
+                                            value={formData.semester}
+                                            onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <PhoneInput
+                                    label="Telefone de contato"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    countryCode={formData.countryCode}
+                                    onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
+                                />
+
+                                <CustomSelect
+                                    label="Instituição"
+                                    options={INSTITUTIONS}
+                                    value={formData.institution}
+                                    onChange={(value) => setFormData({ ...formData, institution: value })}
+                                    placeholder="Selecione a instituição"
+                                    searchPlaceholder="Buscar instituição..."
+                                />
+
+                                <CustomSelect
+                                    label="Curso"
+                                    options={COURSES}
+                                    value={formData.course}
+                                    onChange={(value) => setFormData({ ...formData, course: value })}
+                                    placeholder="Selecione o curso"
+                                    searchPlaceholder="Buscar curso..."
+                                />
+
+                                <CustomSelect
+                                    label="Forma de Atuação"
+                                    options={ACTUATION_FORMS}
+                                    value={formData.actuationForm}
+                                    onChange={(value) => setFormData({ ...formData, actuationForm: value })}
+                                    searchPlaceholder="Buscar forma de atuação..."
+                                />
+
+                                <FileUpload
+                                    label="Comprovante de Matricula"
+                                    value={formData.enrollmentProof}
+                                    onChange={(file) => setFormData({ ...formData, enrollmentProof: file })}
+                                    accept="application/pdf,image/*"
+                                />
+                            </>
                         )}
                     </div>
 
-                    {/* Botões de navegação */}
-                    <div className="flex gap-3 mt-8">
-                        {currentStep > 1 && (
-                            <button
-                                onClick={() => setCurrentStep(currentStep - 1)}
-                                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                            >
-                                Voltar
-                            </button>
-                        )}
-                        <button
-                            onClick={() => {
-                                if (currentStep < 3) {
-                                    setCurrentStep(currentStep + 1)
-                                }
-                            }}
-                            className="flex-1 px-4 py-2.5 bg-blue-600 rounded-lg font-semibold text-sm text-white hover:bg-blue-700 transition-colors"
-                        >
-                            {currentStep === 3 ? "Enviar" : "Continuar"}
-                        </button>
-                    </div>
+                    {/* Botão de continuar */}
+                    <button
+                        onClick={() => {
+                            if (currentStep < 3) {
+                                setCurrentStep(currentStep + 1)
+                            }
+                        }}
+                        className="w-full mt-8 px-3.5 py-2.5 bg-blue-600 rounded-lg font-semibold text-sm text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
+                    >
+                        <span>Prosseguir</span>
+                        <ArrowRight className="w-5 h-5" />
+                    </button>
                 </div>
             </div>
         </div>

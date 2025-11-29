@@ -62,7 +62,7 @@ export function FormWizard({ steps, currentStep, currentStepTitle }: FormWizardP
                 })}
             </div>
             {currentStepTitle && (
-                <div className="bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between px-4 py-2">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-500 flex justify-center px-4 py-2">
                     <p className="font-medium text-xs leading-[18px] text-white text-center">
                         {currentStepTitle}
                     </p>
