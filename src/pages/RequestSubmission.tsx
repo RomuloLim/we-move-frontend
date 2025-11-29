@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Mail, ArrowRight } from "lucide-react"
 import { RequestHeader } from "@/components/RequestHeader"
 import { FormWizard } from "@/components/FormWizard"
@@ -34,6 +35,7 @@ const ACTUATION_FORMS = [
 ]
 
 export default function RequestSubmission() {
+    const navigate = useNavigate()
     const [currentStep, setCurrentStep] = useState(1)
     const [formData, setFormData] = useState({
         // Step 1: Personal Information
@@ -233,6 +235,84 @@ export default function RequestSubmission() {
                                 />
                             </>
                         )}
+
+                        {currentStep === 3 && (
+                            <>
+                                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-4">
+                                    <h3 className="font-semibold text-sm leading-5 text-gray-900 mb-4">Informações Pessoais</h3>
+
+                                    <div className="space-y-3 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Endereço</span>
+                                            <span className="text-gray-900 font-medium text-right max-w-[200px]">{formData.address || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Número</span>
+                                            <span className="text-gray-900 font-medium">{formData.number || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Bairro</span>
+                                            <span className="text-gray-900 font-medium">{formData.neighborhood || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Cidade</span>
+                                            <span className="text-gray-900 font-medium">{formData.city || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Telefone</span>
+                                            <span className="text-gray-900 font-medium">{formData.phone || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Data de Nascimento</span>
+                                            <span className="text-gray-900 font-medium">{formData.birthDate || "-"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-4">
+                                    <h3 className="font-semibold text-sm leading-5 text-gray-900 mb-4">Informações de Estudo</h3>
+
+                                    <div className="space-y-3 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">E-mail</span>
+                                            <span className="text-gray-900 font-medium text-right max-w-[200px] break-all">{formData.email || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Matrícula</span>
+                                            <span className="text-gray-900 font-medium">{formData.registration || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Semestre</span>
+                                            <span className="text-gray-900 font-medium">{formData.semester || "-"}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Instituição</span>
+                                            <span className="text-gray-900 font-medium text-right max-w-[200px]">
+                                                {INSTITUTIONS.find(i => i.value === formData.institution)?.label || "-"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Curso</span>
+                                            <span className="text-gray-900 font-medium text-right max-w-[200px]">
+                                                {COURSES.find(c => c.value === formData.course)?.label || "-"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Forma de Atuação</span>
+                                            <span className="text-gray-900 font-medium">
+                                                {ACTUATION_FORMS.find(a => a.value === formData.actuationForm)?.label || "-"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                                    <p className="text-sm text-blue-900">
+                                        <strong>Atenção:</strong> Verifique se todas as informações estão corretas antes de enviar. Após o envio, você receberá um protocolo de acompanhamento.
+                                    </p>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Botão de continuar */}
@@ -240,11 +320,13 @@ export default function RequestSubmission() {
                         onClick={() => {
                             if (currentStep < 3) {
                                 setCurrentStep(currentStep + 1)
+                            } else {
+                                navigate("/solicitacao-concluida")
                             }
                         }}
                         className="w-full mt-8 px-3.5 py-2.5 bg-blue-600 rounded-lg font-semibold text-sm text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
                     >
-                        <span>Prosseguir</span>
+                        <span>{currentStep === 3 ? "Concluir" : "Prosseguir"}</span>
                         <ArrowRight className="w-5 h-5" />
                     </button>
                 </div>
