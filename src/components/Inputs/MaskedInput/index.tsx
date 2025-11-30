@@ -1,8 +1,6 @@
-import { IMaskMixin } from "react-imask";
-import { Input } from "../Input";
+import { IMaskMixin } from "react-imask"
+import { Input } from "../Input"
 
-type Props = any;
-
-export const MaskedInput = IMaskMixin(({ inputRef, ...props }: Props) => (
+export const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
     <Input {...props} ref={inputRef} />
-));
+))
