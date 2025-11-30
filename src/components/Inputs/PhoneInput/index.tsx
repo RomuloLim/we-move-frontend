@@ -3,6 +3,7 @@ import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { mergeClasses } from "@/lib/utils"
 import { inputVariants, type InputProps } from "../Input"
+import { MaskedInput } from "../MaskedInput"
 
 type PhoneInputProps = Omit<InputProps, "leftIcon" | "type"> & {
     countryCode?: string
@@ -14,14 +15,6 @@ const COUNTRY_CODES = [
     { code: "+1", country: "US" },
     { code: "+44", country: "UK" },
 ]
-
-function formatPhoneNumber(input: string) {
-    const numbers = input.replace(/\D/g, '')
-
-    if (numbers.length <= 2) return `(${numbers}`
-    if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`
-}
 
 const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     ({
@@ -37,16 +30,19 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         value,
         onChange,
         ...props
-    }, ref) => {
+    }) => {
         const [isDropdownOpen, setIsDropdownOpen] = useState(false)
         const hasError = error || variant === "error"
         const inputVariant = hasError ? "error" : "default"
 
-        function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-            const formatted = formatPhoneNumber(e.target.value)
-            onChange?.(e)
-            if (e.target.value !== formatted) {
-                e.target.value = formatted
+        function handleAccept(unmaskedValue: string) {
+            if (onChange) {
+                const syntheticEvent = {
+                    target: {
+                        value: unmaskedValue,
+                    }
+                } as React.ChangeEvent<HTMLInputElement>
+                onChange(syntheticEvent)
             }
         }
 
@@ -94,11 +90,11 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
                         )}
                     </div>
 
-                    <input
-                        ref={ref}
-                        type="tel"
-                        value={value}
-                        onChange={handleChange}
+                    <MaskedInput
+                        mask="(00) 00000-0000"
+                        unmask={true}
+                        value={value as string}
+                        onAccept={handleAccept}
                         disabled={disabled}
                         placeholder="(85) 99999-9999"
                         className="flex-1 px-3 py-2 bg-transparent border-0 outline-none font-normal text-base leading-6 text-gray-900 placeholder:text-gray-400 disabled:opacity-50"
