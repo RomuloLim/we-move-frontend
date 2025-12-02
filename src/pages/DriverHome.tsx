@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react"
-import { ArrowRight, MapPin } from "lucide-react"
+import { ArrowRight, MapPin, X } from "lucide-react"
 import RouteCard from "@/components/RouteCard"
 import { routeService } from "@/services/route.service"
 import { useInfinitePagination } from "@/lib/hooks/useInfinitePagination"
@@ -150,9 +150,7 @@ export default function DriverHome() {
                             onClick={() => setIsDrawerOpen(false)}
                             className="absolute left-4 top-4 text-gray-900 hover:text-gray-700"
                         >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M18 6L6 18M6 6l12 12" />
-                            </svg>
+                            <X className="w-5 h-5" />
                         </button>
                     </DrawerHeader>
 
