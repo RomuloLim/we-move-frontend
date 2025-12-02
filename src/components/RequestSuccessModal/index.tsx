@@ -1,13 +1,27 @@
-import { useNavigate } from "react-router-dom"
 import { Check } from "lucide-react"
 import { Button } from "@/components/Button"
 
-export default function RequestSuccess() {
-    const navigate = useNavigate()
+type RequestSuccessModalProps = {
+    protocol: string
+    status: string
+    date?: string
+    onViewDetails: () => void
+}
 
-    function handleMoreDetails() {
-        navigate("/")
-    }
+export function RequestSuccessModal({
+    protocol,
+    status,
+    date,
+    onViewDetails
+}: RequestSuccessModalProps) {
+    const formattedDate = date || new Date().toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    }).replace('.', '')
 
     return (
         <div className="bg-white min-h-screen flex flex-col items-center justify-center">
@@ -39,23 +53,23 @@ export default function RequestSuccess() {
                 <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 w-full space-y-4">
                     <div className="flex items-start justify-between">
                         <span className="font-normal text-sm leading-5 text-gray-500">Protocolo</span>
-                        <span className="font-semibold text-sm leading-5 text-gray-900">1502241552</span>
+                        <span className="font-semibold text-sm leading-5 text-gray-900">{protocol}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
                         <span className="font-normal text-sm leading-5 text-gray-500">Status</span>
-                        <span className="font-semibold text-sm leading-5 text-gray-900">Em Análise</span>
+                        <span className="font-semibold text-sm leading-5 text-gray-900">{status}</span>
                     </div>
 
                     <div className="flex items-start justify-between">
                         <span className="font-normal text-sm leading-5 text-gray-500">Data</span>
-                        <span className="font-semibold text-sm leading-5 text-gray-900">19 Fev 2024, 04:15 PM</span>
+                        <span className="font-semibold text-sm leading-5 text-gray-900">{formattedDate}</span>
                     </div>
                 </div>
 
                 <div className="px-4 w-full">
-                    <Button onClick={handleMoreDetails} className="w-full">
-                        Mais Detalhes
+                    <Button onClick={onViewDetails} className="w-full">
+                        Voltar ao Inicio
                     </Button>
                 </div>
             </div>

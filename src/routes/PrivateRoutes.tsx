@@ -1,7 +1,6 @@
 import { PrivateRoutesLayout } from "@/components/Layouts/PrivateRoutesLayout";
 import StudentHome from "@/pages/StudentHome";
 import RequestSubmission from "@/pages/RequestSubmission";
-import RequestSuccess from "@/pages/RequestSuccess";
 import { Route, Routes } from "react-router-dom";
 
 export function PrivateRoutes() {
@@ -13,7 +12,6 @@ export function PrivateRoutes() {
                 <Route path="/estudante" element={<div>Estudante Page</div>} />
                 <Route path="/social" element={<div>Social Page</div>} />
                 <Route path="/conta" element={<div>Conta Page</div>} />
-                <Route path="/solicitacao-concluida" element={<RequestSuccess />} />
             </Route>
             <Route path="/enviar-solicitacao" element={<RequestSubmission />} />
         </Routes>
