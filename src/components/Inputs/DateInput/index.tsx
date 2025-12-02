@@ -11,7 +11,7 @@ type DateInputProps = {
 }
 
 const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
-    ({ value, onChange, ...props }) => {
+    ({ value, onChange, ...props }, ref) => {
         function handleAccept(unmaskedValue: string) {
             if (onChange) {
                 const day = unmaskedValue.slice(0, 2)
@@ -31,6 +31,7 @@ const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         return (
             <MaskedInput
                 {...props}
+                inputRef={ref}
                 mask="00/00/0000"
                 unmask={true}
                 value={value as string}
