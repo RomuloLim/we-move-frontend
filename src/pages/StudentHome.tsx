@@ -82,7 +82,7 @@ export default function StudentHome() {
     return (
         <div className="min-h-screen p-4 pb-32">
             <div className="max-w-4xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold text-gray-900">Bem-vindo(a)!</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Home pós cadastro realizado</h1>
                 {studentData && (
                     <div className="bg-white p-6 rounded-lg shadow space-y-4">
                         <h2 className="text-xl font-semibold">Seus Dados</h2>

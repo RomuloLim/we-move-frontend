@@ -10,6 +10,7 @@ import { PhoneInput } from "@/components/Inputs/PhoneInput"
 import { DateInput } from "@/components/Inputs/DateInput"
 import { FileUpload } from "@/components/FileUpload"
 import { Input } from "@/components/Inputs/Input"
+import { RequestSuccessModal } from "@/components/RequestSuccessModal"
 import { requisitionService } from "@/services/requisition.service"
 import { institutionService } from "@/services/institution.service"
 import { useInfinitePagination } from "@/lib/hooks/useInfinitePagination"
@@ -37,6 +38,11 @@ export default function RequestSubmission() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [courses, setCourses] = useState<Course[]>([])
     const [isLoadingCourses, setIsLoadingCourses] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [submissionResult, setSubmissionResult] = useState<{
+        protocol: string
+        status: string
+    } | null>(null)
 
     const {
         data: institutions,
@@ -213,17 +219,20 @@ export default function RequestSubmission() {
                 enrollment_proof: formData.enrollmentProof!,
             })
 
-            navigate("/solicitacao-concluida", {
-                state: {
-                    protocol: response.data.protocol,
-                    status: response.data.status,
-                },
+            setSubmissionResult({
+                protocol: response.data.protocol,
+                status: response.data.status,
             })
+            setShowSuccess(true)
         } catch (error: unknown) {
             console.error("Erro ao enviar solicitação:", error)
         } finally {
             setIsSubmitting(false)
         }
+    }
+
+    function handleViewDetails() {
+        navigate("/")
     }
 
     async function handleContinue() {
@@ -239,6 +248,16 @@ export default function RequestSubmission() {
 
     const stepErrors = getStepErrors()
     const hasErrors = Object.values(stepErrors).some((error) => error)
+
+    if (showSuccess && submissionResult) {
+        return (
+            <RequestSuccessModal
+                protocol={submissionResult.protocol}
+                status={submissionResult.status}
+                onViewDetails={handleViewDetails}
+            />
+        )
+    }
 
     return (
         <div className="w-full min-h-screen bg-gray-50">
