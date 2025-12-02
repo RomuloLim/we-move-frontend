@@ -1,41 +1,109 @@
+import { useEffect, useRef, useCallback, useState } from "react"
+import { ArrowRight, MapPin } from "lucide-react"
 import RouteCard from "@/components/RouteCard"
-
-const MOCK_ROUTES = [
-    {
-        routeNumber: "Linha 1",
-        status: "arriving-soon" as const,
-        tripType: "round-trip" as const,
-        origin: {
-            city: "Fortaleza",
-            location: "Terminal Messejana",
-        },
-        destination: {
-            city: "Fortaleza",
-            location: "UFC - Campus do Pici",
-        },
-        estimatedTime: "45 min",
-        busNumber: "Ônibus 1234",
-        departureTime: "07:30",
-    },
-    {
-        routeNumber: "Linha 2",
-        status: "departed" as const,
-        tripType: "one-way" as const,
-        origin: {
-            city: "Fortaleza",
-            location: "Centro",
-        },
-        destination: {
-            city: "Fortaleza",
-            location: "UECE - Itaperi",
-        },
-        estimatedTime: "30 min",
-        busNumber: "Ônibus 5678",
-        departureTime: "08:00",
-    },
-]
+import { routeService } from "@/services/route.service"
+import { useInfinitePagination } from "@/lib/hooks/useInfinitePagination"
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+} from "@/components/ui/drawer"
 
 export default function DriverHome() {
+    const observerTarget = useRef<HTMLDivElement>(null)
+    const [selectedRoute, setSelectedRoute] = useState<RouteDetail | null>(null)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false)
+
+    const { data: routes, isLoading, isLoadingMore, hasMore, loadMore, load } = useInfinitePagination<RouteData>({
+        fetchFunction: async (page) => {
+            const response = await routeService.getRoutes(page)
+            return {
+                data: response.data,
+                meta: response.meta,
+                links: response.links,
+            }
+        },
+    })
+
+    useEffect(() => {
+        load()
+    }, [load])
+
+    const handleObserver = useCallback(
+        (entries: IntersectionObserverEntry[]) => {
+            const [target] = entries
+            if (target.isIntersecting && hasMore && !isLoadingMore) {
+                loadMore()
+            }
+        },
+        [hasMore, isLoadingMore, loadMore]
+    )
+
+    useEffect(() => {
+        const element = observerTarget.current
+        if (!element) return
+
+        const observer = new IntersectionObserver(handleObserver, {
+            threshold: 0.1,
+        })
+
+        observer.observe(element)
+
+        return () => {
+            observer.disconnect()
+        }
+    }, [handleObserver])
+
+    function extractCityFromStopName(stopName: string): string {
+        const parts = stopName.split(",")
+        if (parts.length > 1) {
+            return parts[parts.length - 2]?.trim() || parts[0]?.trim() || ""
+        }
+        return parts[0]?.trim() || ""
+    }
+
+    function extractLocationFromStopName(stopName: string): string {
+        const parts = stopName.split(",")
+        return parts[0]?.trim() || ""
+    }
+
+    async function handleViewDetails(routeId: number) {
+        try {
+            setIsLoadingDetails(true)
+            setIsDrawerOpen(true)
+            const response = await routeService.getRouteById(routeId)
+            setSelectedRoute(response.data)
+        } catch (error) {
+            console.error("Erro ao carregar detalhes da rota:", error)
+        } finally {
+            setIsLoadingDetails(false)
+        }
+    }
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-gray-600">Carregando rotas...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (routes.length === 0) {
+        return (
+            <div className="min-h-screen flex items-center justify-center px-4 pb-32">
+                <div className="flex flex-col justify-center gap-4 w-full max-w-md text-center">
+                    <p className="font-medium text-sm leading-5 text-gray-900">
+                        Nenhuma rota disponível no momento
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 pb-32">
             <div className="max-w-4xl mx-auto space-y-4">
@@ -45,22 +113,119 @@ export default function DriverHome() {
                 </div>
 
                 <div className="space-y-4">
-                    {MOCK_ROUTES.map((route, index) => (
+                    {routes.map((route) => (
                         <RouteCard
-                            key={index}
-                            routeNumber={route.routeNumber}
-                            status={route.status}
-                            tripType={route.tripType}
-                            origin={route.origin}
-                            destination={route.destination}
-                            estimatedTime={route.estimatedTime}
-                            busNumber={route.busNumber}
-                            departureTime={route.departureTime}
-                            onViewDetails={() => console.log("Ver detalhes da rota")}
+                            key={route.id}
+                            routeNumber={route.route_name}
+                            status="arriving-soon"
+                            tripType="round-trip"
+                            origin={{
+                                city: extractCityFromStopName(route.first_stop.stop_name),
+                                location: extractLocationFromStopName(route.first_stop.stop_name),
+                            }}
+                            destination={{
+                                city: extractCityFromStopName(route.last_stop.stop_name),
+                                location: extractLocationFromStopName(route.last_stop.stop_name),
+                            }}
+                            busNumber={`${route.stops_amount} paradas`}
+                            departureTime="-"
+                            onViewDetails={() => handleViewDetails(route.id)}
                         />
                     ))}
+
+                    <div ref={observerTarget} className="h-10 flex items-center justify-center">
+                        {isLoadingMore && (
+                            <div className="text-center">
+                                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <DrawerContent className="max-h-[90vh]">
+                    <DrawerHeader className="border-b border-gray-200 p-4">
+                        <button
+                            onClick={() => setIsDrawerOpen(false)}
+                            className="absolute left-4 top-4 text-gray-900 hover:text-gray-700"
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </DrawerHeader>
+
+                    <div className="overflow-y-auto px-4 pb-6">
+                        {isLoadingDetails ? (
+                            <div className="flex items-center justify-center py-12">
+                                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                            </div>
+                        ) : selectedRoute ? (
+                            <div className="space-y-6 py-4">
+                                <div className="space-y-2.5">
+                                    <h2 className="text-base font-semibold text-gray-900 leading-6">
+                                        {selectedRoute.route_name}
+                                    </h2>
+                                    <p className="text-xs text-gray-600 leading-[18px]">
+                                        <span className="font-bold">Origem:</span> {extractLocationFromStopName(selectedRoute.stops[0]?.stop_name || "")}
+                                    </p>
+                                    <p className="text-xs text-gray-600 leading-[18px]">
+                                        <span className="font-bold">Destino:</span> {extractLocationFromStopName(selectedRoute.stops[selectedRoute.stops.length - 1]?.stop_name || "")}
+                                    </p>
+                                    <p className="text-xs text-gray-600 leading-[18px]">
+                                        <span className="font-bold">Média de passageiros:</span> -
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    {selectedRoute.stops.map((stop, index) => {
+                                        const isFirst = index === 0
+                                        const isLast = index === selectedRoute.stops.length - 1
+
+                                        return (
+                                            <div key={stop.id} className="flex gap-2 py-2">
+                                                <div className="flex-shrink-0 w-4 h-4 mt-0.5">
+                                                    {isFirst ? (
+                                                        <div className="w-4 h-4 bg-green-500 rounded flex items-center justify-center p-0.5">
+                                                            <MapPin className="w-3 h-3 text-white" />
+                                                        </div>
+                                                    ) : isLast ? (
+                                                        <div className="w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center">
+                                                            <div className="w-2 h-2 bg-white rounded-full" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-4 h-4 bg-gray-400 rounded flex items-center justify-center p-0.5">
+                                                            <MapPin className="w-3 h-3 text-white" />
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-semibold text-gray-900 leading-5">
+                                                        {extractLocationFromStopName(stop.stop_name)}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600 leading-5 break-words">
+                                                        {stop.stop_name}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-3.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                                >
+                                    Selecionar Rota
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ) : null}
+                    </div>
+                </DrawerContent>
+            </Drawer>
         </div>
     )
 }

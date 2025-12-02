@@ -13,7 +13,7 @@ interface RouteCardProps {
         city: string;
         location: string;
     };
-    estimatedTime: string;
+    estimatedTime?: string;
     busNumber: string;
     departureTime: string;
     onViewDetails?: () => void;
@@ -68,14 +68,17 @@ function RouteCard({
                         </div>
                     </div>
 
-                    {/* Time Indicator */}
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                        <div className="px-2 py-1 bg-gray-100 rounded-md whitespace-nowrap">
-                            <p className="text-xs font-semibold text-gray-700">
-                                {estimatedTime}
-                            </p>
-                        </div>
-                    </div>
+                    {
+                        estimatedTime && (
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                                <div className="px-2 py-1 bg-gray-100 rounded-md whitespace-nowrap">
+                                    <p className="text-xs font-semibold text-gray-700">
+                                        {estimatedTime}
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    }
 
                     {/* Destination */}
                     <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -114,7 +117,7 @@ function RouteCard({
             >
                 <p className="text-sm font-semibold text-white">Ver Detalhes</p>
             </button>
-        </Card>
+        </Card >
     );
 }
 
