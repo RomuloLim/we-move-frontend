@@ -1,5 +1,6 @@
 import { BusFront } from "lucide-react";
 import { Card } from "../ui/card";
+import { Button } from "../Button";
 
 interface RouteCardProps {
     routeNumber: string;
@@ -110,13 +111,12 @@ function RouteCard({
             </div>
 
             {/* Button */}
-            <button
-                type="button"
+            <Button
                 onClick={onViewDetails}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-colors"
+                className="w-full py-3"
             >
                 <p className="text-sm font-semibold text-white">Ver Detalhes</p>
-            </button>
+            </Button>
         </Card >
     );
 }
