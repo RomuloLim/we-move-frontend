@@ -15,6 +15,7 @@ type RouteData = {
     route_name: string
     description: string | null
     stops_amount: number
+    stops: Stop[]
     first_stop: Stop
     last_stop: Stop
     created_at: string

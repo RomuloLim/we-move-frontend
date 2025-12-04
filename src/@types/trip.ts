@@ -91,3 +91,47 @@ type TripPassenger = {
 type TripPassengersResponse = {
     data: TripPassenger[]
 }
+
+type ActiveTripAsStudentResponse = {
+    data: {
+        id: number
+        route_id: number
+        driver_id: number
+        vehicle_id: number
+        trip_date: string
+        status: string
+        status_label: string
+        route: {
+            id: number
+            route_name: string
+            description: string | null
+            created_at: string
+            updated_at: string
+        }
+        driver: {
+            id: number
+            name: string
+            email: string
+            cpf: string
+            rg: string
+            gender: string | null
+            gender_label: string
+            user_type: string
+            user_type_label: string
+            phone_contact: string
+            profile_picture_url: string | null
+            created_at: string
+            updated_at: string
+        }
+        vehicle: {
+            id: number
+            license_plate: string
+            model: string
+            capacity: number
+            created_at: string
+            updated_at: string
+        }
+        created_at: string
+        updated_at: string
+    }
+}

@@ -24,6 +24,7 @@ type RouteDrawerProps = {
     }
     stops?: RouteStop[]
     onDisembark?: () => void
+    isDisembarking?: boolean
 }
 
 export function RouteDrawer({
@@ -33,6 +34,7 @@ export function RouteDrawer({
     capacity = { current: 14, total: 28 },
     stops = [],
     onDisembark,
+    isDisembarking = false,
 }: RouteDrawerProps) {
     function getStopIcon(status: RouteStop["status"]) {
         if (status === "destination") {
@@ -115,17 +117,20 @@ export function RouteDrawer({
                             </div>
 
                             <div className="space-y-4 pt-8 pb-6">
-                                <p className="font-normal text-xs leading-[18px] text-gray-500 text-center">
+                                <p className="font-normal text-sm leading-[18px] text-gray-500 text-center">
                                     As rotas podem variar mediante organização do transporte e
                                     necessidade
                                 </p>
-                                <Button
-                                    onClick={onDisembark}
-                                    className="w-full bg-red-700 hover:bg-red-800 text-white"
-                                >
-                                    <AlertCircle className="size-5 mr-1" />
-                                    Desembarcar
-                                </Button>
+                                {onDisembark && (
+                                    <Button
+                                        onClick={onDisembark}
+                                        disabled={isDisembarking}
+                                        className="w-full bg-red-700 hover:bg-red-800 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <AlertCircle className="size-5 mr-1" />
+                                        {isDisembarking ? "Desembarcando..." : "Desembarcar"}
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>

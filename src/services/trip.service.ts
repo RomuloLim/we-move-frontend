@@ -43,6 +43,15 @@ class TripService {
         })
         return response.data
     }
+
+    async getMyActiveTripAsStudent(): Promise<ActiveTripAsStudentResponse | null> {
+        try {
+            const response = await api.get<ActiveTripAsStudentResponse>("/v1/trips/my-active-trip-as-student")
+            return response.data
+        } catch (error) {
+            return null
+        }
+    }
 }
 
 export const tripService = new TripService()

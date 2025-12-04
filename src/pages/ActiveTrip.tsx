@@ -5,6 +5,7 @@ import { tripService } from "@/services/trip.service"
 import { Button } from "@/components/Button"
 import { TripSummaryModal } from "@/components/TripSummaryModal"
 import { BoardingDrawer } from "@/components/BoardingDrawer"
+import { extractLocationFromStopName } from "@/lib/utils"
 
 type StopWithBoardingStatus = Stop & {
     hasBoarded: boolean
@@ -133,11 +134,6 @@ export default function ActiveTrip() {
     function handleCloseSummary() {
         setShowSummary(false)
         navigate("/")
-    }
-
-    function extractLocationFromStopName(stopName: string): string {
-        const parts = stopName.split(",")
-        return parts[0]?.trim() || stopName
     }
 
     if (showSummary && tripSummary) {

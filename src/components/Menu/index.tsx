@@ -28,6 +28,21 @@ function MenuItem({ to, icon, label, onClick, renderCustom, disabled = false }: 
         return renderCustom({ isActive: false })
     }
 
+    if (disabled && !to && !onClick) {
+        return (
+            <div className="flex flex-col items-center justify-end flex-1 px-2 opacity-50 cursor-not-allowed">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full text-gray-700">
+                    {icon}
+                </div>
+                {label && (
+                    <div className="text-sm font-bold mt-1 text-center text-gray-600">
+                        {label}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
     if (onClick && !to) {
         return (
             <button
