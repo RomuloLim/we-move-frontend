@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useLocation } from "react-router-dom"
 import { routeService } from "@/services/route.service"
 import { tripService } from "@/services/trip.service"
 import { Button } from "@/components/Button"
@@ -12,6 +12,7 @@ type StopWithBoardingStatus = Stop & {
 
 export default function ActiveTrip() {
     const navigate = useNavigate()
+    const location = useLocation()
     const { tripId } = useParams<{ tripId: string }>()
     const [route, setRoute] = useState<RouteDetail | null>(null)
     const [stops, setStops] = useState<StopWithBoardingStatus[]>([])
@@ -51,6 +52,19 @@ export default function ActiveTrip() {
 
         loadTripData()
     }, [tripId])
+
+    // Check if should reopen drawer after returning from boarding
+    useEffect(() => {
+        const state = location.state as { reopenDrawer?: boolean; stopId?: number }
+        if (state?.reopenDrawer && state?.stopId) {
+            setSelectedStopId(state.stopId)
+            loadPassengers()
+            setShowBoardingDrawer(true)
+
+            // Clear the state to avoid reopening on refresh
+            navigate(location.pathname, { replace: true, state: {} })
+        }
+    }, [location.state])
 
     function handleBoarding(stopId: number) {
         console.log("Abrindo detalhes de embarque para parada:", stopId)
@@ -107,6 +121,7 @@ export default function ActiveTrip() {
                 setTripSummary(response.data.summary)
                 setShowSummary(true)
                 localStorage.removeItem("currentTrip")
+                window.dispatchEvent(new Event("tripStatusChanged"))
             } catch (error) {
                 console.error("Erro ao finalizar viagem:", error)
             }
@@ -224,6 +239,7 @@ export default function ActiveTrip() {
                 stopId={selectedStopId}
                 onDisembark={handleDisembark}
                 isDisembarking={isDisembarking}
+                isLoading={isLoadingPassengers}
             />
         </div>
     )

@@ -22,6 +22,8 @@ export function useQRCodeScanner({
     const readerRef = useRef<BrowserMultiFormatReader | null>(null)
     const controlsRef = useRef<IScannerControls | null>(null)
     const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const lastScanTimeRef = useRef<number>(0)
+    const scanCooldown = 2000 // 2 seconds cooldown between scans
 
     useEffect(() => {
         if (!enabled) {
@@ -47,14 +49,14 @@ export function useQRCodeScanner({
             setHasPermission(null)
 
             const devices = await BrowserMultiFormatReader.listVideoInputDevices()
-            
+
             if (devices.length === 0) {
                 throw new Error("Nenhuma câmera encontrada")
             }
 
             // Prefer back camera on mobile devices
-            const backCamera = devices.find((device: MediaDeviceInfo) => 
-                device.label.toLowerCase().includes("back") || 
+            const backCamera = devices.find((device: MediaDeviceInfo) =>
+                device.label.toLowerCase().includes("back") ||
                 device.label.toLowerCase().includes("traseira")
             )
             const selectedDevice = backCamera || devices[0]
@@ -67,14 +69,22 @@ export function useQRCodeScanner({
                 (result, error) => {
                     if (result) {
                         const scannedText = result.getText()
+                        const now = Date.now()
+
+                        // Check if enough time has passed since last scan
+                        if (now - lastScanTimeRef.current < scanCooldown) {
+                            return
+                        }
+
+                        lastScanTimeRef.current = now
                         setLastScannedCode(scannedText)
                         onScan?.(scannedText)
-                        
+
                         // Vibrate if supported
                         if (navigator.vibrate) {
                             navigator.vibrate([200])
                         }
-                        
+
                         // Play success sound
                         playSuccessSound()
                     }
@@ -100,16 +110,19 @@ export function useQRCodeScanner({
         if (controlsRef.current) {
             try {
                 controlsRef.current.stop()
+                controlsRef.current = null
             } catch (error) {
                 console.debug("Error stopping scanner:", error)
             }
         }
-        
+
         if (scanTimeoutRef.current) {
             clearTimeout(scanTimeoutRef.current)
             scanTimeoutRef.current = null
         }
 
+        // Reset last scan time to allow new scans when restarted
+        lastScanTimeRef.current = 0
         setIsScanning(false)
     }
 
@@ -123,7 +136,7 @@ export function useQRCodeScanner({
 
         oscillator.frequency.value = 800
         oscillator.type = "sine"
-        
+
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2)
 

@@ -1,28 +1,52 @@
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react"
 import { QRCodeScanner } from "@/components/QRCodeScanner"
+import { tripService } from "@/services/trip.service"
 
 export default function StopBoarding() {
     const navigate = useNavigate()
     const { stopId } = useParams<{ stopId: string }>()
     const [scannedCode, setScannedCode] = useState<string | null>(null)
     const [showSuccess, setShowSuccess] = useState(false)
+    const [showError, setShowError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
+    const [isProcessing, setIsProcessing] = useState(false)
 
-    function handleScan(code: string) {
-        console.log("QR Code escaneado:", code)
-        console.log("Stop ID:", stopId)
-        setScannedCode(code)
-        setShowSuccess(true)
+    async function handleScan(code: string) {
+        if (isProcessing) return
 
-        // TODO: Enviar requisição para o endpoint com stopId
-        // await boardingService.boardAtStop(stopId, code)
+        try {
+            setIsProcessing(true)
+            setScannedCode(code)
 
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-            setShowSuccess(false)
-            setScannedCode(null)
-        }, 3000)
+            const tripData = localStorage.getItem("currentTrip")
+            if (!tripData || !stopId) {
+                throw new Error("Dados da viagem ou parada não encontrados")
+            }
+
+            const trip = JSON.parse(tripData) as Trip
+            await tripService.boardPassenger(trip.id, Number(stopId), code)
+
+            setShowSuccess(true)
+
+            // Redirect back after 2 seconds with state to reopen drawer
+            setTimeout(() => {
+                navigate(`/trajeto/${trip.id}`, {
+                    state: { reopenDrawer: true, stopId: Number(stopId) }
+                })
+            }, 2000)
+        } catch (error: any) {
+            console.error("Erro ao realizar embarque:", error)
+            setErrorMessage(error.response?.data?.message || "Erro ao realizar embarque")
+            setShowError(true)
+
+            setTimeout(() => {
+                setShowError(false)
+                setIsProcessing(false)
+                setScannedCode(null)
+            }, 3000)
+        }
     }
 
     function handleBack() {
@@ -62,7 +86,7 @@ export default function StopBoarding() {
                 <div className="w-full max-w-md aspect-square">
                     <QRCodeScanner
                         onScan={handleScan}
-                        enabled={!showSuccess}
+                        enabled={!showSuccess && !showError && !isProcessing}
                         className="w-full h-full"
                     />
                 </div>
@@ -73,9 +97,24 @@ export default function StopBoarding() {
                         <div className="bg-success-600 text-white rounded-lg p-4 shadow-lg flex items-center gap-3 animate-slide-up">
                             <CheckCircle2 className="w-6 h-6 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm">QR Code lido com sucesso!</p>
-                                <p className="text-xs text-success-100 truncate mt-0.5">
-                                    Código: {scannedCode}
+                                <p className="font-semibold text-sm">Embarque realizado com sucesso!</p>
+                                <p className="text-xs text-success-100 mt-0.5">
+                                    Redirecionando...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Error Feedback */}
+                {showError && (
+                    <div className="fixed inset-x-4 bottom-6 mx-auto max-w-md">
+                        <div className="bg-error-600 text-white rounded-lg p-4 shadow-lg flex items-center gap-3 animate-slide-up">
+                            <AlertCircle className="w-6 h-6 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-sm">Erro ao embarcar</p>
+                                <p className="text-xs text-error-100 mt-0.5">
+                                    {errorMessage}
                                 </p>
                             </div>
                         </div>

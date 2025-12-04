@@ -34,6 +34,15 @@ class TripService {
         })
         return response.data
     }
+
+    async boardPassenger(tripId: number, stopId: number, qrcodeToken: string): Promise<{ message: string; data?: any }> {
+        const response = await api.post<{ message: string; data?: any }>("/v1/boardings/board", {
+            trip_id: tripId,
+            stop_id: stopId,
+            qrcode_token: qrcodeToken
+        })
+        return response.data
+    }
 }
 
 export const tripService = new TripService()

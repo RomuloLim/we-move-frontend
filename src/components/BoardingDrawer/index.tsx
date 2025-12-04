@@ -17,6 +17,7 @@ type BoardingDrawerProps = {
     stopId: number | null
     onDisembark?: (passengerId: number, studentId: number) => void
     isDisembarking?: boolean
+    isLoading?: boolean
 }
 
 export function BoardingDrawer({
@@ -26,6 +27,7 @@ export function BoardingDrawer({
     stopId,
     onDisembark,
     isDisembarking = false,
+    isLoading = false,
 }: BoardingDrawerProps) {
     const navigate = useNavigate()
 
@@ -47,7 +49,12 @@ export function BoardingDrawer({
                 <div className="flex flex-col gap-4 px-4 pb-4">
                     {/* Passengers List */}
                     <div className="flex flex-col gap-2.5 max-h-[calc(85vh-200px)] overflow-y-auto">
-                        {passengers.length === 0 ? (
+                        {isLoading ? (
+                            <div className="text-center py-8">
+                                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                                <p className="text-sm text-gray-600 mt-2">Carregando passageiros...</p>
+                            </div>
+                        ) : passengers.length === 0 ? (
                             <div className="text-center py-8 text-gray-600">
                                 <p className="text-sm">Nenhum passageiro embarcado ainda</p>
                             </div>
