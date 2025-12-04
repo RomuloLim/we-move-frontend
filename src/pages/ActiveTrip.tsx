@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useLocation } from "react-router-dom"
 import { routeService } from "@/services/route.service"
+import { tripService } from "@/services/trip.service"
 import { Button } from "@/components/Button"
+import { TripSummaryModal } from "@/components/TripSummaryModal"
+import { BoardingDrawer } from "@/components/BoardingDrawer"
 
 type StopWithBoardingStatus = Stop & {
     hasBoarded: boolean
@@ -9,10 +12,19 @@ type StopWithBoardingStatus = Stop & {
 
 export default function ActiveTrip() {
     const navigate = useNavigate()
+    const location = useLocation()
     const { tripId } = useParams<{ tripId: string }>()
     const [route, setRoute] = useState<RouteDetail | null>(null)
     const [stops, setStops] = useState<StopWithBoardingStatus[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [showSummary, setShowSummary] = useState(false)
+    const [tripSummary, setTripSummary] = useState<TripSummary | null>(null)
+    const [showBoardingDrawer, setShowBoardingDrawer] = useState(false)
+    const [passengers, setPassengers] = useState<TripPassenger[]>([])
+    const [isLoadingPassengers, setIsLoadingPassengers] = useState(false)
+    const [selectedStopId, setSelectedStopId] = useState<number | null>(null)
+    const [isDisembarking, setIsDisembarking] = useState(false)
+    const [currentTripId, setCurrentTripId] = useState<number | null>(null)
 
     useEffect(() => {
         async function loadTripData() {
@@ -21,6 +33,7 @@ export default function ActiveTrip() {
                 const tripData = localStorage.getItem("currentTrip")
                 if (tripData) {
                     const trip = JSON.parse(tripData) as Trip
+                    setCurrentTripId(trip.id)
                     const routeResponse = await routeService.getRouteById(trip.route_id)
                     setRoute(routeResponse.data)
 
@@ -40,25 +53,102 @@ export default function ActiveTrip() {
         loadTripData()
     }, [tripId])
 
-    function handleBoarding(stopId: number) {
-        setStops(prevStops =>
-            prevStops.map(stop =>
-                stop.id === stopId ? { ...stop, hasBoarded: true } : stop
-            )
-        )
+    // Check if should reopen drawer after returning from boarding
+    useEffect(() => {
+        const state = location.state as { reopenDrawer?: boolean; stopId?: number }
+        if (state?.reopenDrawer && state?.stopId) {
+            setSelectedStopId(state.stopId)
+            loadPassengers()
+            setShowBoardingDrawer(true)
 
-        console.log("Embarque registrado para parada:", stopId)
+            // Clear the state to avoid reopening on refresh
+            navigate(location.pathname, { replace: true, state: {} })
+        }
+    }, [location.state])
+
+    function handleBoarding(stopId: number) {
+        console.log("Abrindo detalhes de embarque para parada:", stopId)
+
+        // Set selected stop and open drawer
+        setSelectedStopId(stopId)
+        loadPassengers()
+        setShowBoardingDrawer(true)
+    }
+
+    async function loadPassengers() {
+        try {
+            setIsLoadingPassengers(true)
+            const tripData = localStorage.getItem("currentTrip")
+            if (!tripData) return
+
+            const trip = JSON.parse(tripData) as Trip
+            const response = await tripService.getTripPassengers(trip.id, true)
+            setPassengers(response.data)
+        } catch (error) {
+            console.error("Erro ao carregar passageiros:", error)
+        } finally {
+            setIsLoadingPassengers(false)
+        }
+    }
+
+    async function handleDisembark(passengerId: number, studentId: number) {
+        if (!currentTripId) return
+
+        try {
+            setIsDisembarking(true)
+            await tripService.unboardPassenger(currentTripId, studentId)
+
+            // Remove passenger from list
+            setPassengers(prev => prev.filter(p => p.id !== passengerId))
+
+            console.log("Desembarque realizado com sucesso")
+        } catch (error) {
+            console.error("Erro ao realizar desembarque:", error)
+        } finally {
+            setIsDisembarking(false)
+        }
     }
 
     function handleFinishTrip() {
-        console.log("Finalizar trajeto")
-        localStorage.removeItem("currentTrip")
+        async function completeTrip() {
+            try {
+                const tripData = localStorage.getItem("currentTrip")
+                if (!tripData) return
+
+                const trip = JSON.parse(tripData) as Trip
+                const response = await tripService.completeTrip(trip.id)
+
+                setTripSummary(response.data.summary)
+                setShowSummary(true)
+                localStorage.removeItem("currentTrip")
+                window.dispatchEvent(new Event("tripStatusChanged"))
+            } catch (error) {
+                console.error("Erro ao finalizar viagem:", error)
+            }
+        }
+
+        completeTrip()
+    }
+
+    function handleCloseSummary() {
+        setShowSummary(false)
         navigate("/")
     }
 
     function extractLocationFromStopName(stopName: string): string {
         const parts = stopName.split(",")
         return parts[0]?.trim() || stopName
+    }
+
+    if (showSummary && tripSummary) {
+        return (
+            <TripSummaryModal
+                routeName={tripSummary.route_name}
+                totalBoardings={tripSummary.total_boardings}
+                duration={tripSummary.duration}
+                onClose={handleCloseSummary}
+            />
+        )
     }
 
     if (isLoading) {
@@ -121,26 +211,36 @@ export default function ActiveTrip() {
                                 <Button
                                     type="button"
                                     onClick={() => handleBoarding(stop.id)}
-                                    disabled={stop.hasBoarded}
                                     className="w-full justify-center"
                                 >
-                                    {stop.hasBoarded ? "Embarcado" : "Embarque"}
+                                    Embarque
                                 </Button>
                             </div>
                         )
                     })}
                 </div>
 
-                <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-gray-200">
+                <div className="fixed w-full bottom-26 left-0 right-0 p-4">
                     <Button
                         type="button"
                         onClick={handleFinishTrip}
-                        className="w-full max-w-4xl mx-auto bg-green-600 hover:bg-green-700 justify-center"
+                        className="w-full mx-auto bg-green-700 hover:bg-green-800 justify-center"
                     >
                         Finalizar Viagem
                     </Button>
                 </div>
             </div>
+
+            {/* Boarding Drawer */}
+            <BoardingDrawer
+                open={showBoardingDrawer}
+                onOpenChange={setShowBoardingDrawer}
+                passengers={passengers}
+                stopId={selectedStopId}
+                onDisembark={handleDisembark}
+                isDisembarking={isDisembarking}
+                isLoading={isLoadingPassengers}
+            />
         </div>
     )
 }

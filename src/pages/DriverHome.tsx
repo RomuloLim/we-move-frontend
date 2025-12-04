@@ -65,6 +65,7 @@ export default function DriverHome() {
             const activeTrip = await tripService.getMyActiveTrip()
             if (activeTrip?.data) {
                 localStorage.setItem("currentTrip", JSON.stringify(activeTrip.data))
+                window.dispatchEvent(new Event("tripStatusChanged"))
                 navigate(`/trajeto/${activeTrip.data.id}`)
             }
         }
@@ -175,6 +176,7 @@ export default function DriverHome() {
             })
 
             localStorage.setItem("currentTrip", JSON.stringify(response.data))
+            window.dispatchEvent(new Event("tripStatusChanged"))
 
             setIsDrawerOpen(false)
             navigate(`/trajeto/${response.data.id}`)
