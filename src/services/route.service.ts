@@ -10,6 +10,11 @@ class RouteService {
         const response = await api.get<RouteDetailResponse>(`/v1/routes/${id}`)
         return response.data
     }
+
+    async getRouteStops(routeId: number): Promise<Stop[]> {
+        const response = await api.get<RouteDetailResponse>(`/v1/routes/${routeId}`)
+        return response.data.data.stops
+    }
 }
 
 export const routeService = new RouteService()
