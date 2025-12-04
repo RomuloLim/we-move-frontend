@@ -4,6 +4,7 @@ import { studentService } from "@/services/student.service"
 import { PaperUploadIcon } from "@/components/icons/PaperUploadIcon"
 import RouteCard from "@/components/RouteCard"
 import { RouteDrawer } from "@/components/RouteDrawer"
+import { PullToRefresh } from "@/components/PullToRefresh"
 import { extractLocationFromStopName } from "@/lib/utils"
 
 type RouteStop = {
@@ -93,75 +94,77 @@ export default function StudentHome() {
         const hasAvailableTrips = studentData.available_trips && studentData.available_trips.length > 0
 
         return (
-            <div className="min-h-screen bg-gray-50 p-4 pb-32">
-                <div className="max-w-4xl mx-auto space-y-6">
-                    {/* Header */}
-                    <div className="flex flex-col gap-1">
-                        <h1 className="font-semibold text-2xl leading-8 text-gray-900">
-                            Olá, {studentData.user.name}
-                        </h1>
-                        <p className="font-normal text-base leading-6 text-gray-600">
-                            Trajetos disponíveis para você
-                        </p>
-                    </div>
-
-                    {/* Available Trips */}
-                    {hasAvailableTrips ? (
-                        <div className="space-y-3">
-                            {studentData.available_trips.map((trip) => {
-                                const tripDate = new Date(trip.trip_date)
-                                const departureTime = tripDate.toLocaleTimeString("pt-BR", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                })
-
-                                const stops = mapTripStopsToRouteStops(trip.route.stops)
-
-                                return (
-                                    <RouteDrawer
-                                        key={trip.id}
-                                        trigger={
-                                            <div>
-                                                <RouteCard
-                                                    routeNumber={trip.route.route_name}
-                                                    status={trip.status === "scheduled" ? "arriving-soon" : undefined}
-                                                    tripType="one-way"
-                                                    origin={{
-                                                        city: extractLocationFromStopName(trip.route.first_stop?.stop_name || "Origem"),
-                                                        location: trip.route.first_stop?.stop_name || "Origem",
-                                                    }}
-                                                    destination={{
-                                                        city: extractLocationFromStopName(trip.route.last_stop?.stop_name || "Destino"),
-                                                        location: trip.route.last_stop?.stop_name || "Destino",
-                                                    }}
-                                                    busNumber={trip.vehicle.license_plate}
-                                                    departureTime={departureTime}
-                                                />
-                                            </div>
-                                        }
-                                        driverName={trip.driver.name}
-                                        driverPhone={trip.driver.phone_contact}
-                                        capacity={{
-                                            current: 0,
-                                            total: trip.vehicle.capacity,
-                                        }}
-                                        stops={stops}
-                                    />
-                                )
-                            })}
-                        </div>
-                    ) : (
-                        <div className="bg-white rounded-lg p-8 shadow-sm text-center">
-                            <h3 className="font-medium text-base leading-6 text-gray-900 mb-2">
-                                Nenhum trajeto disponível
-                            </h3>
-                            <p className="font-normal text-sm leading-5 text-gray-600">
-                                Não há trajetos programados para sua rota no momento.
+            <PullToRefresh onRefresh={fetchStudentData}>
+                <div className="min-h-screen bg-gray-50 p-4 pb-32">
+                    <div className="max-w-4xl mx-auto space-y-6">
+                        {/* Header */}
+                        <div className="flex flex-col gap-1">
+                            <h1 className="font-semibold text-2xl leading-8 text-gray-900">
+                                Olá, {studentData.user.name}
+                            </h1>
+                            <p className="font-normal text-base leading-6 text-gray-600">
+                                Trajetos disponíveis para você
                             </p>
                         </div>
-                    )}
+
+                        {/* Available Trips */}
+                        {hasAvailableTrips ? (
+                            <div className="space-y-3">
+                                {studentData.available_trips.map((trip) => {
+                                    const tripDate = new Date(trip.trip_date)
+                                    const departureTime = tripDate.toLocaleTimeString("pt-BR", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })
+
+                                    const stops = mapTripStopsToRouteStops(trip.route.stops)
+
+                                    return (
+                                        <RouteDrawer
+                                            key={trip.id}
+                                            trigger={
+                                                <div>
+                                                    <RouteCard
+                                                        routeNumber={trip.route.route_name}
+                                                        status={trip.status === "scheduled" ? "arriving-soon" : undefined}
+                                                        tripType="one-way"
+                                                        origin={{
+                                                            city: extractLocationFromStopName(trip.route.first_stop?.stop_name || "Origem"),
+                                                            location: trip.route.first_stop?.stop_name || "Origem",
+                                                        }}
+                                                        destination={{
+                                                            city: extractLocationFromStopName(trip.route.last_stop?.stop_name || "Destino"),
+                                                            location: trip.route.last_stop?.stop_name || "Destino",
+                                                        }}
+                                                        busNumber={trip.vehicle.license_plate}
+                                                        departureTime={departureTime}
+                                                    />
+                                                </div>
+                                            }
+                                            driverName={trip.driver.name}
+                                            driverPhone={trip.driver.phone_contact}
+                                            capacity={{
+                                                current: 0,
+                                                total: trip.vehicle.capacity,
+                                            }}
+                                            stops={stops}
+                                        />
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-lg p-8 shadow-sm text-center">
+                                <h3 className="font-medium text-base leading-6 text-gray-900 mb-2">
+                                    Nenhum trajeto disponível
+                                </h3>
+                                <p className="font-normal text-sm leading-5 text-gray-600">
+                                    Não há trajetos programados para sua rota no momento.
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </PullToRefresh>
         )
     }
 
