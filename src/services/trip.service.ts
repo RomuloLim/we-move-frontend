@@ -19,6 +19,21 @@ class TripService {
         const response = await api.patch<CompleteTripResponse>(`/v1/trips/${tripId}/complete`)
         return response.data
     }
+
+    async getTripPassengers(tripId: number, onlyBoarded: boolean = true): Promise<TripPassengersResponse> {
+        const response = await api.get<TripPassengersResponse>(`/v1/trips/${tripId}/passengers`, {
+            params: { only_boarded: onlyBoarded }
+        })
+        return response.data
+    }
+
+    async unboardPassenger(tripId: number, studentId: number): Promise<{ message: string }> {
+        const response = await api.post<{ message: string }>("/v1/boardings/unboard", {
+            trip_id: tripId,
+            student_id: studentId
+        })
+        return response.data
+    }
 }
 
 export const tripService = new TripService()
