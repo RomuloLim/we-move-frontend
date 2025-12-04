@@ -4,6 +4,7 @@ import StudentHome from "@/pages/StudentHome"
 import DriverHome from "@/pages/DriverHome"
 import ActiveTrip from "@/pages/ActiveTrip"
 import RequestSubmission from "@/pages/RequestSubmission"
+import SpotBoarding from "@/pages/SpotBoarding"
 import { Route, Routes } from "react-router-dom"
 
 export function PrivateRoutes() {
@@ -16,7 +17,7 @@ export function PrivateRoutes() {
             <Routes>
                 <Route element={<DriverRoutesLayout />}>
                     <Route path="/" element={<DriverHome />} />
-                    <Route path="/embarque-avulso" element={<div>Embarque Avulso Page</div>} />
+                    <Route path="/embarque-avulso" element={<SpotBoarding />} />
                     <Route path="/aviso" element={<div>Aviso Page</div>} />
                     <Route path="/trajeto/:tripId" element={<ActiveTrip />} />
                 </Route>
