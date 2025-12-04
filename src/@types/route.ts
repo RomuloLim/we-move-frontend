@@ -4,7 +4,7 @@ type Stop = {
     stop_name: string
     latitude: string
     longitude: string
-    scheduled_time: number
+    scheduled_time: string | null
     order: number
     created_at: string
     updated_at: string
@@ -13,8 +13,49 @@ type Stop = {
 type RouteData = {
     id: number
     route_name: string
-    description: string
+    description: string | null
+    stops_amount: number
+    first_stop: Stop
+    last_stop: Stop
+    created_at: string
+    updated_at: string
+}
+
+type RouteDetail = {
+    id: number
+    route_name: string
+    description: string | null
     stops: Stop[]
     created_at: string
     updated_at: string
 }
+
+type RouteDetailResponse = {
+    data: RouteDetail
+}
+
+type RoutesListResponse = {
+    data: RouteData[]
+    links: {
+        first: string
+        last: string
+        prev: string | null
+        next: string | null
+    }
+    meta: {
+        current_page: number
+        from: number
+        last_page: number
+        links: Array<{
+            url: string | null
+            label: string
+            page: number | null
+            active: boolean
+        }>
+        path: string
+        per_page: number
+        to: number
+        total: number
+    }
+}
+

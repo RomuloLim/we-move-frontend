@@ -12,3 +12,17 @@ type Trip = {
     created_at: string
     updated_at: string
 }
+
+type StartTripRequest = {
+    route_id: number
+    vehicle_id: number
+    trip_date: string
+}
+
+type StartTripResponse = {
+    data: Trip
+}
+
+type ActiveTripResponse = {
+    data: Trip
+}

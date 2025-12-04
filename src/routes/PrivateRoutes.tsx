@@ -2,6 +2,7 @@ import { StudentRoutesLayout } from "@/components/Layouts/StudentRoutesLayout"
 import { DriverRoutesLayout } from "@/components/Layouts/DriverRoutesLayout"
 import StudentHome from "@/pages/StudentHome"
 import DriverHome from "@/pages/DriverHome"
+import ActiveTrip from "@/pages/ActiveTrip"
 import RequestSubmission from "@/pages/RequestSubmission"
 import { Route, Routes } from "react-router-dom"
 
@@ -18,6 +19,7 @@ export function PrivateRoutes() {
                     <Route path="/embarque-avulso" element={<div>Embarque Avulso Page</div>} />
                     <Route path="/aviso" element={<div>Aviso Page</div>} />
                 </Route>
+                <Route path="/trajeto/:tripId" element={<ActiveTrip />} />
             </Routes>
         )
     }
