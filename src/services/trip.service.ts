@@ -14,6 +14,11 @@ class TripService {
             return null
         }
     }
+
+    async completeTrip(tripId: number): Promise<CompleteTripResponse> {
+        const response = await api.patch<CompleteTripResponse>(`/v1/trips/${tripId}/complete`)
+        return response.data
+    }
 }
 
 export const tripService = new TripService()

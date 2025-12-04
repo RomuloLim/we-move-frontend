@@ -26,3 +26,17 @@ type StartTripResponse = {
 type ActiveTripResponse = {
     data: Trip
 }
+
+type TripSummary = {
+    route_name: string
+    total_boardings: number
+    duration: string
+}
+
+type CompleteTripResponse = {
+    message: string
+    data: {
+        trip: Trip
+        summary: TripSummary
+    }
+}

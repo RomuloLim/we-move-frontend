@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { routeService } from "@/services/route.service"
+import { tripService } from "@/services/trip.service"
 import { Button } from "@/components/Button"
+import { TripSummaryModal } from "@/components/TripSummaryModal"
 
 type StopWithBoardingStatus = Stop & {
     hasBoarded: boolean
@@ -13,6 +15,8 @@ export default function ActiveTrip() {
     const [route, setRoute] = useState<RouteDetail | null>(null)
     const [stops, setStops] = useState<StopWithBoardingStatus[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [showSummary, setShowSummary] = useState(false)
+    const [tripSummary, setTripSummary] = useState<TripSummary | null>(null)
 
     useEffect(() => {
         async function loadTripData() {
@@ -51,14 +55,44 @@ export default function ActiveTrip() {
     }
 
     function handleFinishTrip() {
-        console.log("Finalizar trajeto")
-        localStorage.removeItem("currentTrip")
+        async function completeTrip() {
+            try {
+                const tripData = localStorage.getItem("currentTrip")
+                if (!tripData) return
+
+                const trip = JSON.parse(tripData) as Trip
+                const response = await tripService.completeTrip(trip.id)
+
+                setTripSummary(response.data.summary)
+                setShowSummary(true)
+                localStorage.removeItem("currentTrip")
+            } catch (error) {
+                console.error("Erro ao finalizar viagem:", error)
+            }
+        }
+
+        completeTrip()
+    }
+
+    function handleCloseSummary() {
+        setShowSummary(false)
         navigate("/")
     }
 
     function extractLocationFromStopName(stopName: string): string {
         const parts = stopName.split(",")
         return parts[0]?.trim() || stopName
+    }
+
+    if (showSummary && tripSummary) {
+        return (
+            <TripSummaryModal
+                routeName={tripSummary.route_name}
+                totalBoardings={tripSummary.total_boardings}
+                duration={tripSummary.duration}
+                onClose={handleCloseSummary}
+            />
+        )
     }
 
     if (isLoading) {
@@ -131,11 +165,11 @@ export default function ActiveTrip() {
                     })}
                 </div>
 
-                <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-gray-200">
+                <div className="fixed w-full bottom-26 left-0 right-0 p-4">
                     <Button
                         type="button"
                         onClick={handleFinishTrip}
-                        className="w-full max-w-4xl mx-auto bg-green-600 hover:bg-green-700 justify-center"
+                        className="w-full mx-auto bg-green-700 hover:bg-green-800 justify-center"
                     >
                         Finalizar Viagem
                     </Button>

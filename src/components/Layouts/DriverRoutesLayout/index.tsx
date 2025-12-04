@@ -1,3 +1,4 @@
+import { Button } from "@/components/Button"
 import { Menu } from "@/components/Menu"
 import { Home, CircleAlert, LayoutGrid } from "lucide-react"
 import { Outlet } from "react-router-dom"

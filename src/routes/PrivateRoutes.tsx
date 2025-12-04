@@ -18,8 +18,8 @@ export function PrivateRoutes() {
                     <Route path="/" element={<DriverHome />} />
                     <Route path="/embarque-avulso" element={<div>Embarque Avulso Page</div>} />
                     <Route path="/aviso" element={<div>Aviso Page</div>} />
+                    <Route path="/trajeto/:tripId" element={<ActiveTrip />} />
                 </Route>
-                <Route path="/trajeto/:tripId" element={<ActiveTrip />} />
             </Routes>
         )
     }
