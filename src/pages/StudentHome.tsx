@@ -6,6 +6,7 @@ import RouteCard from "@/components/RouteCard"
 import { RouteDrawer } from "@/components/RouteDrawer"
 import { PullToRefresh } from "@/components/PullToRefresh"
 import { extractLocationFromStopName } from "@/lib/utils"
+import { NoticeAlert } from "@/components/NoticeAlert"
 
 type RouteStop = {
     id: string
@@ -106,6 +107,9 @@ export default function StudentHome() {
                                 Trajetos disponíveis para você
                             </p>
                         </div>
+
+                        {/* Notice Alert */}
+                        <NoticeAlert />
 
                         {/* Available Trips */}
                         {hasAvailableTrips ? (
