@@ -13,6 +13,7 @@ import {
     DrawerHeader,
 } from "@/components/ui/drawer"
 import { Button } from "@/components/Button"
+import { NoticeAlert } from "@/components/NoticeAlert"
 
 type DrawerView = "route-details" | "vehicle-selection"
 
@@ -217,6 +218,9 @@ export default function DriverHome() {
                     <h1 className="text-2xl font-bold text-gray-900">Suas Rotas</h1>
                     <p className="text-sm text-gray-600">Gerencie suas viagens e rotas</p>
                 </div>
+
+                {/* Notice Alert */}
+                <NoticeAlert />
 
                 <div className="space-y-4">
                     {routes.map((route) => (
