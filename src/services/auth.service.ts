@@ -2,7 +2,15 @@ import { api } from "@/lib/axios"
 
 const VALID_USER_TYPES = ["student", "driver", "super-admin"]
 
+type AuthContextSetter = (user: User | null) => void
+
 class AuthService {
+    private setCurrentAuth: AuthContextSetter | null = null
+
+    setAuthContext(setter: AuthContextSetter) {
+        this.setCurrentAuth = setter
+    }
+
     async login(credentials: LoginRequest): Promise<LoginResponse> {
         const response = await api.post<LoginResponse>("/v1/auth/login", credentials)
 
@@ -37,6 +45,10 @@ class AuthService {
         } finally {
             localStorage.removeItem("token")
             localStorage.removeItem("user")
+            
+            if (this.setCurrentAuth) {
+                this.setCurrentAuth(null)
+            }
         }
     }
 
@@ -69,6 +81,11 @@ class AuthService {
         }
 
         localStorage.setItem("user", JSON.stringify(user))
+        
+        if (this.setCurrentAuth) {
+            this.setCurrentAuth(user)
+        }
+        
         return user
     }
 
@@ -77,6 +94,10 @@ class AuthService {
 
         const updatedUser = response.data.data
         localStorage.setItem("user", JSON.stringify(updatedUser))
+
+        if (this.setCurrentAuth) {
+            this.setCurrentAuth(updatedUser)
+        }
 
         return response.data
     }

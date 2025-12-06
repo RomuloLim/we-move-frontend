@@ -1,40 +1,39 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { useEffect } from "react"
 
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import { ComponentShowcase } from "@/components/component-showcase";
-import { PrivateRoutes } from "./PrivateRoutes";
+import Login from "@/pages/Login"
+import Register from "@/pages/Register"
+import { ComponentShowcase } from "@/components/component-showcase"
+import { PrivateRoutes } from "./PrivateRoutes"
+import { useAuth } from "@/lib/auth-context"
+import { authService } from "@/services/auth.service"
 
 export function AppRoutes() {
-    function getStoredUser(): User | null {
-        const userStr = localStorage.getItem("user");
-        if (!userStr) {
-            return null;
-        }
+    const { currentAuth, setCurrentAuth, isLoading } = useAuth()
 
-        try {
-            const user: User | null = userStr ? JSON.parse(userStr) : null;
+    useEffect(() => {
+        authService.setAuthContext(setCurrentAuth)
+    }, [setCurrentAuth])
 
-            return user;
-        } catch {
-            return null;
-        }
+    if (isLoading) {
+        return null
     }
-
-    const isAuthenticated = getStoredUser() !== null;
 
     return (
         <Router>
             <Routes>
-                {isAuthenticated ? (
+                {currentAuth ? (
                     <>
                         <Route path="/*" element={<PrivateRoutes />} />
                         <Route path="/showcase" element={<ComponentShowcase />} />
+                        <Route path="/login" element={<Navigate to="/" replace />} />
+                        <Route path="/register" element={<Navigate to="/" replace />} />
                     </>
                 ) : (
                     <>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="*" element={<Navigate to="/login" replace />} />
                     </>
                 )}
             </Routes>

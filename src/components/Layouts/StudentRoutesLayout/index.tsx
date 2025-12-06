@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom"
 import { toast } from "sonner"
 import { Menu } from "@/components/Menu"
 import { RouteDrawer } from "@/components/RouteDrawer"
+import { FullScreenDrawer } from "@/components/FullScreenDrawer"
 import { tripService } from "@/services/trip.service"
 import { routeService } from "@/services/route.service"
 import { extractLocationFromStopName } from "@/lib/utils"
@@ -22,6 +23,7 @@ export function StudentRoutesLayout() {
     const [activeTripId, setActiveTripId] = useState<number | null>(null)
     const [studentId, setStudentId] = useState<number | null>(null)
     const [isDisembarking, setIsDisembarking] = useState(false)
+    const [isStudentDrawerOpen, setIsStudentDrawerOpen] = useState(false)
 
     useEffect(() => {
         checkActiveTripAndLoadStops()
@@ -138,10 +140,39 @@ export function StudentRoutesLayout() {
                         />
                     ) : undefined}
                 />
-                <Menu.Item to="/estudante" icon={<LayoutGrid />} label="Estudante" />
+                <Menu.Item
+                    icon={<LayoutGrid />}
+                    label="Estudante"
+                    renderCustom={() => (
+                        <button
+                            type="button"
+                            onClick={() => setIsStudentDrawerOpen(true)}
+                            className="flex flex-col items-center justify-end flex-1 px-2 text-gray-700"
+                        >
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full text-gray-700">
+                                <LayoutGrid />
+                            </div>
+                            <div className="text-sm font-bold mt-1 text-center text-gray-600">
+                                Estudante
+                            </div>
+                        </button>
+                    )}
+                />
                 <Menu.Item to="/social" icon={<UsersRound />} label="Social" />
                 <Menu.Item to="/conta" icon={<UserRound />} label="Conta" />
             </Menu>
+
+            <FullScreenDrawer
+                open={isStudentDrawerOpen}
+                onOpenChange={setIsStudentDrawerOpen}
+            >
+                <div className="px-4 py-6">
+                    <h2 className="text-2xl font-bold mb-4">Estudante</h2>
+                    <p className="text-gray-600">
+                        Conteúdo do drawer de estudante aqui
+                    </p>
+                </div>
+            </FullScreenDrawer>
         </div>
     )
 }
