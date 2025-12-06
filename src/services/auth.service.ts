@@ -71,6 +71,15 @@ class AuthService {
         localStorage.setItem("user", JSON.stringify(user))
         return user
     }
+
+    async updateUser(userId: number, data: UpdateUserRequest): Promise<UpdateUserResponse> {
+        const response = await api.put<UpdateUserResponse>(`/v1/users/${userId}`, data)
+
+        const updatedUser = response.data.data
+        localStorage.setItem("user", JSON.stringify(updatedUser))
+
+        return response.data
+    }
 }
 
 export const authService = new AuthService()
