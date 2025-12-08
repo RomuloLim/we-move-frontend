@@ -1,16 +1,16 @@
-import { FullScreenDrawer } from "."
+import { StudentCardDrawer } from "."
 import { Button } from "@/components/Button"
 
-export function FullScreenDrawerShowcase() {
+export function StudentCardDrawerShowcase() {
     return (
         <div className="p-8 space-y-8">
             <div>
-                <h2 className="text-2xl font-bold mb-4">Full Screen Drawer</h2>
+                <h2 className="text-2xl font-bold mb-4">Student Card Drawer</h2>
                 <p className="text-gray-600 mb-4">
                     Drawer que ocupa toda a tela com botão X no canto superior esquerdo.
                 </p>
 
-                <FullScreenDrawer
+                <StudentCardDrawer
                     trigger={
                         <Button>
                             Abrir Drawer Tela Cheia
@@ -46,7 +46,7 @@ export function FullScreenDrawerShowcase() {
                             </div>
                         </div>
                     </div>
-                </FullScreenDrawer>
+                </StudentCardDrawer>
             </div>
 
             <div className="space-y-4">
