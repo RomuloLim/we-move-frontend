@@ -10,6 +10,8 @@ export type Requisition = {
     city: string
     phone_contact: string
     birth_date: string
+    institution_registration: string
+    valid_at: string
     atuation_form: string
     deny_reason: string | null
     reproved_fields: string | null
